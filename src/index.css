@@ -1,5 +1,9 @@
 @import './assets/queries.css';
 
+html {
+  background: var(--gray-10);
+}
+
 #root {
   width: min(960px, 100%);
   min-height: 100vh;
@@ -14,13 +18,78 @@
 }
 
 .App {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 1rem;
+  width: 360px;
+  padding: 0.25rem;
+  background-color: var(--gray-15);
+  border: 1px solid var(--gray-20);
+  border-radius: 0.125rem;
+}
 
-  & > div {
-    flex: 1 1 auto;
-    width: 240px;
-  }
+#formula,
+#display {
+  text-align: right;
+}
+
+#formula {
+  min-height: 3rem;
+  padding-top: 0.5rem;
+}
+
+#display {
+  padding: 1rem 0.5rem 1.5rem;
+  font-size: 2.5rem;
+}
+
+#buttons {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(3rem, 1fr));
+  grid-auto-rows: 3rem;
+  gap: 0.25rem;
+}
+
+.btn-number {
+  background-color: #0006;
+}
+.btn-operation {
+  background-color: #0003;
+}
+.btn-number,
+.btn-operation {
+  font-size: 1.25rem;
+
+  border-radius: 0.125rem;
+  outline-style: solid;
+  outline-width: 1px;
+  outline-color: transparent;
+
+  transition: background-color 0.15s ease-in-out,
+    outline-color 0.15s ease-in-out;
+}
+
+.btn-number:active,
+.btn-operation:active {
+  border: none;
+  outline-color: #666;
+}
+
+.btn-number:focus-visible,
+.btn-operation:focus-visible,
+.btn-number:hover,
+.btn-operation:hover {
+  background-color: transparent;
+}
+
+#clear:focus-visible,
+#clear:hover {
+  background-color: #6003;
+}
+
+#equals:focus-visible,
+#equals:hover {
+  background-color: #0063;
+}
+
+#clear,
+#zero {
+  grid-column: 1 / 3;
 }

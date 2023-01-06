@@ -1,16 +1,11 @@
 {
-  "name": "tmpl-vite-react",
+  "name": "caclulator",
   "version": "0.0.1",
-  "description": "A Reactjs Client using Vite.js - configured eslint, airbnb and prettier - using postcss (modules, import, nesting)",
+  "description": "A calculator built with Reactjs.",
   "keywords": [
     "Reactjs",
     "Vitejs",
-    "postcss",
-    "boilerplate",
-    "template",
-    "eslint",
-    "airbnb",
-    "prettier"
+    "postcss"
   ],
   "type": "module",
   "scripts": {

@@ -1,8 +1,8 @@
 # fcc-project - calculator
 
 [freeCodeCamp](https://www.freecodecamp.org/learn/front-end-development-libraries/front-end-development-libraries-projects/build-a-javascript-calculator)\
-[Demo](https://javascript-calculator.freecodecamp.rocks/)\
-[Repo](https://github.com/freeCodeCamp/demo-projects/tree/main/apps/javascript-calculator)
+[Example Demo](https://javascript-calculator.freecodecamp.rocks/)\
+[Example Repo](https://github.com/freeCodeCamp/demo-projects/tree/main/apps/javascript-calculator)
 
 [x] User Story #1: My calculator should contain a clickable element containing an = (equal sign) with a corresponding id="equals".
 

@@ -9,25 +9,25 @@ import postcssCustomMedia from 'postcss-custom-media';
 // https://www.youtube.com/watch?v=Sgcfiow4fVQ
 
 export default (args) => {
-  const isProduction = args.mode === 'production';
-  const generateScopedName = isProduction
-    ? '[hash:base64:3]'
-    : '[local]_[hash:base64:3]';
+	const isProduction = args.mode === 'production';
+	const generateScopedName = isProduction
+		? '[hash:base64:3]'
+		: '[local]_[hash:base64:3]';
 
-  // console.log(`Running ${args.mode} mode ...\n`);
-  // console.log(args);
+	// console.log(`Running ${args.mode} mode ...\n`);
+	// console.log(args);
 
-  return defineConfig({
-    base: './',
-    plugins: [react()],
-    css: {
-      modules: {
-        localsConvention: 'camelCase',
-        generateScopedName,
-      },
-      postcss: {
-        plugins: [postcssCustomMedia(), postcssNesting()],
-      },
-    },
-  });
+	return defineConfig({
+		base: './',
+		plugins: [react()],
+		css: {
+			modules: {
+				localsConvention: 'camelCase',
+				generateScopedName,
+			},
+			postcss: {
+				plugins: [postcssCustomMedia(), postcssNesting()],
+			},
+		},
+	});
 };

@@ -6,5 +6,6 @@
 	"arrowParens": "always",
 	"bracketSameLine": true,
 	"singleQuote": true,
+	"printWidth": 80,
 	"endOfLine": "crlf"
 }

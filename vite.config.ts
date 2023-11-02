@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type ConfigEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
 import postcssNesting from 'postcss-nesting';
@@ -8,7 +8,7 @@ import postcssCustomMedia from 'postcss-custom-media';
 // https://vitejs.dev/guide/build.html#public-base-path
 // https://www.youtube.com/watch?v=Sgcfiow4fVQ
 
-export default (args) => {
+export default (args: ConfigEnv) => {
 	const isProduction = args.mode === 'production';
 	const generateScopedName = isProduction
 		? '[hash:base64:3]'

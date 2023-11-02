@@ -1,5 +1,5 @@
-import { OPERATIONS, SIGNS } from '../context/stateData.js';
-import { isNumber } from './utils.js';
+import { OPERATIONS, SIGNS } from '../calculator/state/data.js';
+import { valueIsDigit } from './utils.js';
 
 function formatWholePart(string) {
 	return string
@@ -55,7 +55,7 @@ export function formatFormula(array) {
 			//   );
 			//   return SIGNS[key];
 			// })
-			.map((item) => (isNumber(item) ? item : findSign(item)))
+			.map((item) => (valueIsDigit(item) ? item : findSign(item)))
 			.join(' ')
 	);
 }

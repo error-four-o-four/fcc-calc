@@ -47,14 +47,15 @@ html {
 	gap: 0.25rem;
 }
 
-.btn-number {
+.btn-digit {
 	background-color: #0006;
 }
-.btn-operation {
+.btn-operator,
+.btn-function {
 	background-color: #0003;
 }
-.btn-number,
-.btn-operation {
+
+.btn-calculator {
 	font-size: 1.25rem;
 
 	border-radius: 0.125rem;
@@ -67,30 +68,30 @@ html {
 		outline-color 0.15s ease-in-out;
 }
 
-.btn-number:active,
-.btn-operation:active {
+.btn-calculator:active {
 	border: none;
 	outline-color: #666;
 }
 
-.btn-number:focus-visible,
-.btn-operation:focus-visible,
-.btn-number:hover,
-.btn-operation:hover {
+.btn-calculator:focus-visible,
+.btn-calculkator:hover {
 	background-color: transparent;
 }
 
-#clear:focus-visible,
-#clear:hover {
+#function-parenthesis {
+	color: #66f;
+}
+
+#function-clear {
+	color: #c33;
+}
+
+#function-clear:focus-visible,
+#function-clear:hover {
 	background-color: #6003;
 }
 
-#equals:focus-visible,
-#equals:hover {
+#function-equals:focus-visible,
+#function-equals:hover {
 	background-color: #0063;
-}
-
-#clear,
-#zero {
-	grid-column: 1 / 3;
 }

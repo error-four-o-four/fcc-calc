@@ -1,38 +1,33 @@
 import { useEffect, useReducer } from 'react';
 
-import { Operation, OtherAction } from './calculator/state/types.js';
-import { ACTIONS, buttons } from './calculator/state/data.js';
+import { assertInstanceOf } from './utils/types.ts';
+import { displayFormula } from './utils/formatters.ts';
+
+import { buttons } from './calculator/config/buttons.ts';
 
 import {
 	stateReducer,
 	initialCalculatorState,
-	stateDispatcher,
-} from './calculator/state/reducer.js';
+} from './calculator/state/reducer.ts';
 
-import {
-	omitDispatch,
-	getActionKey,
-	getActionValue,
-} from './calculator/state/utils.js';
-
-import { assertInstanceOf } from './assets/utils.js';
-import { formatNumber, formatFormula } from './assets/formatters.js';
+import { type Actions } from './calculator/state/actions.ts';
 
 export default function App() {
 	const [state, dispatch] = useReducer(stateReducer, initialCalculatorState);
 
 	const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-		assertInstanceOf(e.target, HTMLButtonElement);
+		const button = e.target;
+		assertInstanceOf(button, HTMLButtonElement);
 
-		const type = getActionKey(e.target.id);
+		const type = button.id.split('-')[0] as Actions;
+		const { value } = button;
 
-		if (!type) return;
-
-		const value = getActionValue(e.target.value);
-
-		if (omitDispatch(state, type, value)) return;
-
-		stateDispatcher(dispatch, type, value);
+		dispatch({
+			type,
+			payload: {
+				value,
+			},
+		});
 	};
 
 	useEffect(() => {
@@ -41,21 +36,19 @@ export default function App() {
 
 	return (
 		<div className="App">
-			<div id="formula">{formatFormula(state.entries)}</div>
-			<div id="display">{formatNumber(state.current)}</div>
+			<div id="formula">{displayFormula(state.formula)}</div>
+			<div id="display">{state.result}</div>
 			<div id="buttons">
-				{buttons.map(({ action, text, value }) => {
-					const id =
-						value && (action === ACTIONS.DIGIT || ACTIONS.OPERATION)
-							? `${action}-${value}`
-							: action;
+				{buttons.map(({ action, text, data }) => {
+					const key = `${action}-${data}`;
+					const value = action === 'digit' ? text : data;
 
 					return (
 						<button
-							key={id}
-							id={id}
+							key={key}
+							id={key}
 							className={`btn-calculator btn-${action}`}
-							value={!!value ? `${value}` : ''}
+							value={value}
 							type="button"
 							onClick={handleClick}>
 							{text}

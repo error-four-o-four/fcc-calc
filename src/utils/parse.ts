@@ -1,6 +1,4 @@
 // import { OPERATORS, SIGNS } from '../calculator/config/data.ts';
-import { SYMBOLS, type SymbolKeys } from '../calculator/config/config.ts';
-import { Formula } from '../calculator/state/reducer.ts';
 
 // function formatWholePart(string: string) {
 // 	return string
@@ -39,11 +37,11 @@ import { Formula } from '../calculator/state/reducer.ts';
 
 // formatNumber('12345678901234');
 
-// replace operater string with symbol => add => +
-export function displayFormula(array: Formula) {
-	return array
-		.map((item) =>
-			Number.isNaN(Number(item)) ? SYMBOLS[item as SymbolKeys] : item
-		)
-		.join(' ');
+export function parseNumber(value: string) {
+	return Number.isInteger(value) ? parseInt(value, 10) : parseFloat(value);
+}
+
+export function decimalLength(value: number) {
+	const parts = value.toString().split('.');
+	return !parts[1] ? 0 : parts[1].length;
 }

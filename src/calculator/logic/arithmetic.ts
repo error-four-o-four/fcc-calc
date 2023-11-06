@@ -1,10 +1,10 @@
-import { type Operators } from '../config/config.ts';
+import { type ArithmeticOperators } from '../config.ts';
 
 import { assertCondition } from '../../utils/types.ts';
-import { isOperator, decimalLength } from '../../utils/parser.ts';
+import { isOperator, decimalLength } from '../../utils/assert.ts';
 
 type Calculator = {
-	[K in Operators]: (a: number, b: number) => number;
+	[K in ArithmeticOperators]: (a: number, b: number) => number;
 };
 
 const calculator = <Calculator>{

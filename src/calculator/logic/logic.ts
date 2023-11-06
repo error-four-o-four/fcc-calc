@@ -1,28 +1,32 @@
-import { type Operators } from '../config/config.ts';
-import { type Formula, type ParsedFormula } from '../state/reducer.ts';
+import { type ArithmeticOperators } from '../config.ts';
+import { type Formula, type ParsedFormula } from '../state/state.ts';
 
-import { assertCondition } from '../../utils/types.ts';
-import { isOperator, isNumber, parseNumber } from '../../utils/parser.ts';
+import { assertCondition, assertTypeOfNumber } from '../../utils/types.ts';
+import { isOperator } from '../../utils/assert.ts';
+import { parseNumber } from '../../utils/parse.ts';
 
-import calculator from './calculator.ts';
+import calculator from './arithmetic.ts';
 
 const resolve = (
 	formula: ParsedFormula,
-	operator: Operators,
+	operator: ArithmeticOperators,
 	index = formula.indexOf(operator)
 ) => {
 	const a = formula[index - 1];
 	const b = formula[index + 1];
 
-	assertCondition(
-		isNumber(a),
-		`Expected the value to be a number while resolving '${operator}' - Received '${a}'`
-	);
+	assertTypeOfNumber(a);
+	assertTypeOfNumber(b);
 
-	assertCondition(
-		isNumber(b),
-		`Expected the value to be a number while resolving '${operator}' - Received '${b}'`
-	);
+	// assertCondition(
+	// 	isNumber(a),
+	// 	`Expected the value to be a number while resolving '${operator}' - Received '${a}'`
+	// );
+
+	// assertCondition(
+	// 	isNumber(b),
+	// 	`Expected the value to be a number while resolving '${operator}' - Received '${b}'`
+	// );
 
 	const c = calculator[operator](a, b);
 
@@ -33,7 +37,7 @@ const resolve = (
 // const resolveParenthesis = () =>
 
 const resolveAll = (
-	operator: Extract<Operators, 'multiply' | 'divide'>,
+	operator: Extract<ArithmeticOperators, 'multiply' | 'divide'>,
 	formula: ParsedFormula
 ) => {
 	let index = formula.indexOf(operator);
@@ -68,15 +72,8 @@ export default function calculate(formula: Formula) {
 	);
 
 	// function is only called when the last action was of type 'digit'
-	assertCondition(
-		isNumber(parsed[0]),
-		`Expected the first value to be a number - Received '${parsed[0]}'`
-	);
-
-	assertCondition(
-		isNumber(parsed.at(-1)),
-		`Expected the last value to be a number - Received '${parsed.at(-1)}'`
-	);
+	assertTypeOfNumber(parsed.at(0));
+	assertTypeOfNumber(parsed.at(-1));
 
 	parsed = resolveAll('multiply', parsed);
 	parsed = resolveAll('divide', parsed);

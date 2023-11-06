@@ -1,51 +1,23 @@
-import { type LiteralStringUnion } from '../../utils/types.ts';
-import { type Actions, type DispatchedAction } from './actions.ts';
-import { type Operators } from '../config/config.ts';
+import { type CalculatorState } from './state.ts';
+import { type DispatchedAction } from './actions.ts';
 
-import handleDigitActionDispatch from './handlers/handle.digit.ts';
-import handleOperatorActionDispatch from './handlers/handle.operation.ts';
-import handleFunctionActionDispatch from './handlers/handle.function.ts';
-
-// use LiteralStringUnion to disable https://typescript-eslint.io/rules/no-redundant-type-constituents/
-// let t: FormulaItem = 's';
-// t = 'add';
-// console.log(t);
-export type FormulaItem = LiteralStringUnion<
-	Operators | 'leftPar' | 'rightPar'
->;
-
-export type Formula = Array<FormulaItem>;
-// @todo
-export type ParsedFormula = Array<number | Operators>;
-
-export interface CalculatorState {
-	action: Actions;
-	formula: Formula;
-	result: string;
-}
+import handleDigitAction from './handlers/digit.ts';
+import handleOperatorAction from './handlers/operator.ts';
 
 export const initialCalculatorState: CalculatorState = {
 	action: 'digit',
 	formula: ['0'],
-	result: '',
+	error: null,
 };
 
 export function stateReducer(state: CalculatorState, action: DispatchedAction) {
 	const { type, payload } = action;
 
 	if (type === 'digit') {
-		return handleDigitActionDispatch(state, payload);
+		return handleDigitAction(state, payload);
 	}
 
-	if (type === 'operator') {
-		return handleOperatorActionDispatch(state, payload);
-	}
-
-	if (type === 'function') {
-		return handleFunctionActionDispatch(state, payload);
-	}
-
-	throw new Error('Something went wrong');
+	return handleOperatorAction(state, payload);
 }
 
 // import { type CalculatorState } from "../calculator/state/reducer.ts";

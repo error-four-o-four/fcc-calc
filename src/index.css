@@ -35,9 +35,23 @@ html {
 	padding-top: 0.5rem;
 }
 
+.formula--large {
+	font-size: 1.2rem;
+}
+
+/* .formula--small {
+	font-size: 0.8rem;
+} */
+
 #display {
 	padding: 1rem 0.5rem 1.5rem;
-	font-size: 2.5rem;
+	color: #ccc;
+}
+
+.display__operator {
+	display: inline-block;
+	margin: 0 0.125rem;
+	color: #69f;
 }
 
 #buttons {

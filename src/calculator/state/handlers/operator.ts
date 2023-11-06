@@ -1,4 +1,4 @@
-import { type CalculatorState } from '../reducer.ts';
+import { type CalculatorState } from '../state.ts';
 import { type Actions, type BaseActionPayload } from '../actions.ts';
 
 export default (

@@ -1,6 +1,6 @@
 import { type TupleToUnion } from '../../utils/types.ts';
 
-const ACTION_KEYS = ['digit', 'operator', 'function'] as const;
+const ACTION_KEYS = ['digit', 'operator'] as const;
 
 export type Actions = TupleToUnion<typeof ACTION_KEYS>;
 
@@ -21,8 +21,4 @@ export interface OperatorAction extends BaseAction {
 	type: 'operator';
 }
 
-export interface FunctionAction extends BaseAction {
-	type: 'function';
-}
-
-export type DispatchedAction = DigitAction | OperatorAction | FunctionAction;
+export type DispatchedAction = DigitAction | OperatorAction;

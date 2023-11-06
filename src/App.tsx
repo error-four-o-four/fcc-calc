@@ -1,61 +1,40 @@
-import { useEffect, useReducer } from 'react';
+import Calculator from './calculator/state/context.tsx';
 
-import { assertInstanceOf } from './utils/types.ts';
-import { displayFormula } from './utils/formatters.ts';
-
-import { buttons } from './calculator/config/buttons.ts';
-
-import {
-	stateReducer,
-	initialCalculatorState,
-} from './calculator/state/reducer.ts';
-
-import { type Actions } from './calculator/state/actions.ts';
+import Display from './components/Display.tsx';
+import Button from './components/Button.tsx';
 
 export default function App() {
-	const [state, dispatch] = useReducer(stateReducer, initialCalculatorState);
-
-	const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-		const button = e.target;
-		assertInstanceOf(button, HTMLButtonElement);
-
-		const type = button.id.split('-')[0] as Actions;
-		const { value } = button;
-
-		dispatch({
-			type,
-			payload: {
-				value,
-			},
-		});
-	};
-
-	useEffect(() => {
-		console.log(state);
-	});
-
 	return (
 		<div className="App">
-			<div id="formula">{displayFormula(state.formula)}</div>
-			<div id="display">{state.result}</div>
-			<div id="buttons">
-				{buttons.map(({ action, text, data }) => {
-					const key = `${action}-${data}`;
-					const value = action === 'digit' ? text : data;
+			<Calculator>
+				<Display />
+				<div id="buttons">
+					<Button action="function" data="clear" text="AC" />
+					<Button action="function" data="parenthesis" text="()" />
+					<Button action="function" data="erase" text="⌫" />
+					<Button action="operator" data="divide" text="÷" />
 
-					return (
-						<button
-							key={key}
-							id={key}
-							className={`btn-calculator btn-${action}`}
-							value={value}
-							type="button"
-							onClick={handleClick}>
-							{text}
-						</button>
-					);
-				})}
-			</div>
+					<Button action="digit" data="seven" text="7" />
+					<Button action="digit" data="eight" text="8" />
+					<Button action="digit" data="nine" text="9" />
+					<Button action="operator" data="multiply" text="×" />
+
+					<Button action="digit" data="four" text="4" />
+					<Button action="digit" data="five" text="5" />
+					<Button action="digit" data="six" text="6" />
+					<Button action="operator" data="subtract" text="−" />
+
+					<Button action="digit" data="one" text="1" />
+					<Button action="digit" data="two" text="2" />
+					<Button action="digit" data="three" text="3" />
+					<Button action="operator" data="add" text="+" />
+
+					<Button action="function" data="sign" text="±" />
+					<Button action="digit" data="zero" text="0" />
+					<Button action="function" data="decimal" text="." />
+					<Button action="function" data="equals" text="=" />
+				</div>
+			</Calculator>
 		</div>
 	);
 }

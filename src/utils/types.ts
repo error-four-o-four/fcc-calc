@@ -1,11 +1,19 @@
+import { isTypeOfNumber } from './assert.ts';
+
 export type TupleToUnion<T extends readonly string[]> =
 	T extends readonly string[] ? T[number] : never;
 
-export type UnionToDict<T extends string> = Readonly<{
-	[K in T extends string ? Uppercase<T> : never]: T extends string
-		? Lowercase<K>
-		: never;
-}>;
+// export type UnionToDict<T extends string> = Readonly<{
+// 	[K in T extends string ? Uppercase<T> : never]: T extends string
+// 		? Lowercase<K>
+// 		: never;
+// }>;
+
+// export const keysToDict = <T extends string>(keys: readonly string[]) =>
+// 	keys.reduce(
+// 		(all, key) => Object.assign(all, { [key.toLocaleUpperCase()]: key }),
+// 		{} as UnionToDict<T>
+// 	);
 
 export type LiteralStringUnion<LiteralType> =
 	| LiteralType
@@ -16,11 +24,11 @@ export type ValueOf<
 	ValueType extends keyof ObjectType = keyof ObjectType,
 > = ObjectType[ValueType];
 
-// export const keysToDict = <T extends string>(keys: readonly string[]) =>
-// 	keys.reduce(
-// 		(all, key) => Object.assign(all, { [key.toLocaleUpperCase()]: key }),
-// 		{} as UnionToDict<T>
-// 	);
+export type Permutations<T, U = T> = [T] extends [never]
+	? []
+	: T extends T
+	? [T, ...Permutations<Exclude<U, T>>]
+	: never;
 
 export function assertNotNull(
 	value: unknown
@@ -45,4 +53,9 @@ export function assertCondition(
 	message = 'Damn you typescript'
 ): asserts condition {
 	if (!condition) throw new Error(message);
+}
+
+export function assertTypeOfNumber(value: unknown): asserts value is number {
+	if (!isTypeOfNumber(value))
+		throw new Error(`'${value as string}' is not a valid number`);
 }

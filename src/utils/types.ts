@@ -1,7 +1,5 @@
-import { isTypeOfNumber } from './assert.ts';
-
-export type TupleToUnion<T extends readonly string[]> =
-	T extends readonly string[] ? T[number] : never;
+// export type TupleToUnion<T extends readonly string[]> =
+// 	T extends readonly string[] ? T[number] : never;
 
 // export type UnionToDict<T extends string> = Readonly<{
 // 	[K in T extends string ? Uppercase<T> : never]: T extends string
@@ -24,38 +22,16 @@ export type ValueOf<
 	ValueType extends keyof ObjectType = keyof ObjectType,
 > = ObjectType[ValueType];
 
-export type Permutations<T, U = T> = [T] extends [never]
-	? []
-	: T extends T
-	? [T, ...Permutations<Exclude<U, T>>]
-	: never;
+type NonEmptyArray<T> = [T, ...T[]];
 
-export function assertNotNull(
-	value: unknown
-): asserts value is NonNullable<typeof value> {
-	if (value === null) throw new Error('Argument is null!');
+type MustInclude<T, U extends T[]> = [T] extends [ValueOf<U>] ? U : never;
+
+export function stringUnionToStrictArray<T>() {
+	return <U extends NonEmptyArray<T>>(...items: MustInclude<T, U>) => items;
 }
 
-export function assertInstanceOf<T>(
-	element: unknown,
-	expected: new () => T
-): asserts element is T {
-	if (!element || !(element instanceof expected)) {
-		const received = !element ? 'null' : element.constructor.name;
-		throw new Error(
-			`Expected element to be a ${expected.name}, but was ${received}`
-		);
-	}
-}
-
-export function assertCondition(
-	condition: boolean,
-	message = 'Damn you typescript'
-): asserts condition {
-	if (!condition) throw new Error(message);
-}
-
-export function assertTypeOfNumber(value: unknown): asserts value is number {
-	if (!isTypeOfNumber(value))
-		throw new Error(`'${value as string}' is not a valid number`);
-}
+// export type Permutations<T, U = T> = [T] extends [never]
+// 	? []
+// 	: T extends T
+// 	? [T, ...Permutations<Exclude<U, T>>]
+// 	: never;

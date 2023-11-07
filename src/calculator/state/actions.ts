@@ -1,24 +1,67 @@
-import { type TupleToUnion } from '../../utils/types.ts';
+import { isOperatorInFormula } from '../../utils/confirm.ts';
 
-const ACTION_KEYS = ['digit', 'operator'] as const;
+import type {
+	DigitValues,
+	ArithmeticOperators,
+	FunctionalOperators,
+} from '../config.ts';
 
-export type Actions = TupleToUnion<typeof ACTION_KEYS>;
+import type { CalculatorState, FormulaItem } from './state.ts';
 
-export type BaseActionPayload = {
-	value: string;
+export type Actions = 'digit' | 'operator' | 'functional';
+
+export type DigitActionPayload = {
+	value: DigitValues;
 };
 
-interface BaseAction {
-	type: Actions;
-	payload: BaseActionPayload;
-}
+export type OperatorActionPayload = {
+	value: ArithmeticOperators;
+};
 
-export interface DigitAction extends BaseAction {
+export type FunctionalActionPayload = {
+	value: FunctionalOperators;
+};
+
+export type DigitAction = {
 	type: 'digit';
-}
+	payload: DigitActionPayload;
+};
 
-export interface OperatorAction extends BaseAction {
+export type OperatorAction = {
 	type: 'operator';
-}
+	payload: OperatorActionPayload;
+};
 
-export type DispatchedAction = DigitAction | OperatorAction;
+export type FunctionalAction = {
+	type: 'functional';
+	payload: FunctionalActionPayload;
+};
+
+// export type DispatchedAction = DigitAction | OperatorAction | FunctionalAction;
+export type DispatchedAction = {
+	type: Actions;
+	payload: DigitActionPayload | OperatorActionPayload | FunctionalActionPayload;
+};
+
+export type ExtendedPayload<T> = T & {
+	last: FormulaItem;
+	lastIsOperator: boolean;
+};
+
+export type TypedPayload<K extends Actions> = K extends 'digit'
+	? ExtendedPayload<DigitActionPayload>
+	: K extends 'operator'
+	? ExtendedPayload<OperatorActionPayload>
+	: K extends 'functional'
+	? ExtendedPayload<FunctionalActionPayload>
+	: never;
+
+export function getExtraPayload(state: CalculatorState) {
+	const last = state.formula[state.formula.length - 1];
+	const lastIsOperator = isOperatorInFormula(last);
+
+	return {
+		last,
+		lastIsOperator,
+	};
+}

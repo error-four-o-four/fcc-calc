@@ -1,32 +1,94 @@
 import { useContext } from 'react';
 
-import { type Actions } from '../calculator/state/actions.ts';
-
-import {
-	type OperatorSymbols,
-	type Operators,
-	type Digits,
-	type DigitKeys,
+import type {
+	Digits,
+	ArithmeticOperators,
+	FunctionalOperators,
 } from '../calculator/config.ts';
+
+import type { Actions } from '../calculator/state/actions.ts';
 
 import { CalculatorDispatchContext } from '../calculator/state/context.tsx';
 
-export type ButtonProps = {
-	action: Actions;
-	data: Operators | DigitKeys;
-	text: OperatorSymbols | Digits;
+import { DIGITS, OPERATORS } from '../calculator/config.ts';
+
+type DigitButtonProps = {
+	digit: Digits;
+	operator?: never;
+	functional?: never;
 };
 
-export default function Button({ action, data, text }: ButtonProps) {
+type OperatorButtonProps = {
+	digit?: never;
+	operator: ArithmeticOperators;
+	functional?: never;
+};
+
+type FunctionalButtonProps = {
+	digit?: never;
+	operator?: never;
+	functional: FunctionalOperators;
+};
+
+type TypedButtonProps<T extends Actions> = T extends 'digit'
+	? DigitButtonProps
+	: T extends 'operator'
+	? OperatorButtonProps
+	: T extends 'functional'
+	? FunctionalButtonProps
+	: never;
+
+const getValues = (props: TypedButtonProps<Actions>) => {
+	const type: Actions =
+		'digit' in props
+			? 'digit'
+			: 'operator' in props
+			? 'operator'
+			: 'functional';
+
+	if (type === 'digit') {
+		const { digit } = props as TypedButtonProps<typeof type>;
+		const value = DIGITS[digit];
+		return {
+			id: digit,
+			type,
+			value,
+			icon: value,
+		};
+	}
+
+	if (type === 'operator') {
+		const { operator } = props as TypedButtonProps<typeof type>;
+		return {
+			id: operator,
+			type,
+			value: operator,
+			icon: OPERATORS[operator],
+		};
+	}
+
+	const { functional } = props as TypedButtonProps<typeof type>;
+	return {
+		id: functional,
+		type,
+		value: functional,
+		icon: OPERATORS[functional],
+	};
+};
+
+function Button(props: DigitButtonProps): React.JSX.Element;
+function Button(props: OperatorButtonProps): React.JSX.Element;
+function Button(props: FunctionalButtonProps): React.JSX.Element;
+function Button(
+	props: DigitButtonProps | OperatorButtonProps | FunctionalButtonProps
+) {
 	const dispatch = useContext(CalculatorDispatchContext);
 
-	const id = data;
-	const value = action === 'digit' ? text : data;
+	const { id, type, value, icon } = getValues(props);
 
 	const handleClick = () => {
-		console.log(action);
 		dispatch({
-			type: action,
+			type,
 			payload: {
 				value,
 			},
@@ -36,11 +98,13 @@ export default function Button({ action, data, text }: ButtonProps) {
 	return (
 		<button
 			id={id}
-			className={`btn-calculator btn-${action}`}
-			value={value}
+			className={`btn-calculator btn-${type}`}
 			type="button"
+			value={value}
 			onClick={handleClick}>
-			{text}
+			{icon}
 		</button>
 	);
 }
+
+export default Button;

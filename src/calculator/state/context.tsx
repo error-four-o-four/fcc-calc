@@ -1,14 +1,11 @@
-import {
-	createContext,
-	useReducer,
-	type Dispatch,
-	type PropsWithChildren,
-} from 'react';
+import type { Dispatch, PropsWithChildren } from 'react';
+import { createContext, useReducer } from 'react';
 
-import { initialCalculatorState, type CalculatorState } from './state.ts';
+import type { CalculatorState } from './state.ts';
+import type { DispatchedAction } from './actions.ts';
 
+import { initialCalculatorState } from './state.ts';
 import { stateReducer } from './reducer.ts';
-import { type DispatchedAction } from './actions.ts';
 
 export const CalculatorStateContext = createContext<CalculatorState>(
 	initialCalculatorState

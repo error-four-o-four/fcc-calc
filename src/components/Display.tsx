@@ -1,16 +1,17 @@
 import { useContext } from 'react';
 
-import { assertCondition } from '../utils/types.ts';
-import { isOperator, isValidNumber } from '../utils/assert.ts';
-
-import { CalculatorStateContext } from '../calculator/state/context.tsx';
-import { type Formula } from '../calculator/state/state.ts';
+import { assertCondition } from '../utils/assert.ts';
+import { isOperatorInFormula, isValidNumber } from '../utils/confirm.ts';
 
 import { OPERATORS } from '../calculator/config.ts';
-import calculate from '../calculator/logic/logic.ts';
+import { CalculatorStateContext } from '../calculator/state/context.tsx';
 
-const formatWholePart = (value: string) => {
-	return value
+const formatWholePart = (string: string) => {
+	const isNegative = string.startsWith('-');
+
+	let value = isNegative ? string.substring(1) : string;
+
+	value = value
 		.split('')
 		.reverse()
 		.reduce(
@@ -20,12 +21,12 @@ const formatWholePart = (value: string) => {
 		)
 		.reverse()
 		.join('');
+
+	return isNegative ? `-${value}` : value;
 };
 
 const renderNumber = (value: string) => {
-	const isDecimal = value.includes('.');
-
-	if (isDecimal) {
+	if (value.includes('.')) {
 		const [whole, fraction] = value.split('.');
 		return `${formatWholePart(whole)}.${fraction}`;
 	}
@@ -33,40 +34,31 @@ const renderNumber = (value: string) => {
 	return formatWholePart(value);
 };
 
-// const renderSymbol = (value: string) => {
-// 	assertCondition(isSymbolKey(value));
-// 	return `
-// 	<span class="display__operator">${SYMBOLS[value]}</span>;
-// 	`;
-// };
+// const renderFormula = (formula: ParsedFormula) =>
+// 	formula.map((item) =>
+// 		typeof item === 'number' ? renderNumber(item) : OPERATORS[item]
+// 	);
 
-const renderFormula = (formula: Formula) =>
-	formula
-		.map((item) => {
-			if (isValidNumber(item)) return renderNumber(item);
+// const renderFormula = (formula: Formula) =>
+// 	formula
+// 		.map((item) => {
+// 			// return isOperator(item) ? OPERATORS[item] : renderNumber(item);
+// 			if (isValidNumber(item)) return renderNumber(item);
 
-			assertCondition(isOperator(item));
-			return OPERATORS[item];
-		})
-		.join('');
-
-const countNumberItems = (formula: Formula) =>
-	formula.reduce((count, item) => (isValidNumber(item) ? count + 1 : count), 0);
+// 			assertCondition(isOperator(item));
+// 			return OPERATORS[item];
+// 		})
+// 		.join('');
 
 export default function Display() {
 	const state = useContext(CalculatorStateContext);
 
-	const renderedFormula = renderFormula(state.formula);
-	const classNameSize =
-		renderedFormula.length < 25 ? 'formula--large' : 'formula--small';
+	console.log(state);
 
-	const calculateResult =
-		state.action === 'digit' && countNumberItems(state.formula) >= 2;
-
-	const result = (calculateResult && calculate(state.formula)) || null;
-	const renderedResult = (result && renderNumber(result)) || '';
-
-	const renderedError = state.error ? state.error : '';
+	// const renderedFormula = renderFormula(parsed);
+	// const classNameSize =
+	// renderedFormula.length < 25 ? 'formula--large' : 'formula--small';
+	const classNameSize = 'formula--large';
 
 	return (
 		<>
@@ -74,7 +66,7 @@ export default function Display() {
 				{state.formula.map((item, index) => {
 					if (isValidNumber(item)) return renderNumber(item);
 
-					assertCondition(isOperator(item));
+					assertCondition(isOperatorInFormula(item));
 					const key = `operator-${index}`;
 					return (
 						<span key={key} className="display__operator">
@@ -83,9 +75,8 @@ export default function Display() {
 					);
 				})}
 			</div>
-			{/* <div id="formula">{renderFormula(state.formula)}</div> */}
-			<div id="display">{renderedResult}</div>
-			<div id="notification">{renderedError}</div>
+			<div id="display">{state.result || ''}</div>
+			<div id="notification">{state.error || ''}</div>
 		</>
 	);
 }

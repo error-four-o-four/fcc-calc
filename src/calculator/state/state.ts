@@ -1,24 +1,33 @@
-import { type LiteralStringUnion } from '../../utils/types.ts';
-import { type Actions } from './actions.ts';
-import { type FormulaOperators } from '../config.ts';
+import type { LiteralStringUnion } from '../../utils/types.ts';
+import type { ArithmeticOperators } from '../config.ts';
+
+// import type { ArithmeticOperators, Operators } from '../config.ts';
 
 // use LiteralStringUnion to disable https://typescript-eslint.io/rules/no-redundant-type-constituents/
 // let t: FormulaItem = 's';
 // t = 'add';
 // console.log(t);
-export type FormulaItem = LiteralStringUnion<FormulaOperators>;
+
+// export type OperatorsInFormula = Readonly<
+// 	Extract<Operators, ArithmeticOperators | 'lpar' | 'rpar'> | 'negate'
+// >;
+
+export type OperatorsInFormula = ArithmeticOperators;
 
 export type Formula = Array<FormulaItem>;
-export type ParsedFormula = Array<number | FormulaOperators>;
+export type FormulaItem = LiteralStringUnion<OperatorsInFormula>;
+
+export type ParsedFormula = Array<ParsedFormulaItem>;
+export type ParsedFormulaItem = number | OperatorsInFormula;
 
 export interface CalculatorState {
-	action: Actions;
 	formula: Formula;
+	result: string | null;
 	error: string | null;
 }
 
 export const initialCalculatorState: CalculatorState = {
-	action: 'digit',
 	formula: ['0'],
+	result: null,
 	error: null,
 };

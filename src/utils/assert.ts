@@ -1,40 +1,33 @@
-import { type Permutations } from './types.ts';
+import { isTypeOfNumber } from './confirm.ts';
 
-import {
-	OPERATORS,
-	type Operators,
-	type FormulaOperators,
-} from '../calculator/config.ts';
+export function assertCondition(
+	condition: boolean,
+	message = 'Damn you typescript'
+): asserts condition {
+	if (!condition) throw new Error(message);
+}
 
-export const isTypeOfNumber = (value: unknown) =>
-	typeof value === 'number' &&
-	!Number.isNaN(value) &&
-	Math.abs(value) !== Infinity;
+export function assertTypeOfNumber(
+	value: unknown,
+	message = `'${value as string}' is not a valid number`
+): asserts value is number {
+	if (!isTypeOfNumber(value)) throw new Error(message);
+}
 
-export const isValidNumber = (value: string) => {
-	const number = Number(value);
-	return isTypeOfNumber(number);
-};
+// export function assertNotNull(
+// 	value: unknown
+// ): asserts value is NonNullable<typeof value> {
+// 	if (value === null) throw new Error('Argument is null!');
+// }
 
-// console.log(1, isNumber(1));
-// console.log('-1', isNumber('-1'));
-// console.log('test', isNumber('test'));
-// console.log('-Infinity', isNumber('-Infinity'));
-// console.log(NaN, isNumber(NaN));
-
-export const isOperator = (value: unknown): value is Operators =>
-	(value as Operators) in OPERATORS;
-
-type StrictFormulaOperatorsArray = Permutations<FormulaOperators>;
-
-const FORMULA_OPERATOR: StrictFormulaOperatorsArray = [
-	'add',
-	'subtract',
-	'multiply',
-	'divide',
-	'lpar',
-	'rpar',
-];
-
-export const isFormulaOperator = (value: unknown): value is FormulaOperators =>
-	FORMULA_OPERATOR.includes(value as FormulaOperators);
+// export function assertInstanceOf<T>(
+// 	element: unknown,
+// 	expected: new () => T
+// ): asserts element is T {
+// 	if (!element || !(element instanceof expected)) {
+// 		const received = !element ? 'null' : element.constructor.name;
+// 		throw new Error(
+// 			`Expected element to be a ${expected.name}, but was ${received}`
+// 		);
+// 	}
+// }

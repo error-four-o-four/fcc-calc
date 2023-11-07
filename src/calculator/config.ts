@@ -19,29 +19,35 @@ export const OPERATORS = {
 	multiply: '×',
 	divide: '÷',
 	clear: 'AC',
-	parenthesis: '()',
-	lpar: '(',
-	rpar: ')',
+	// parenthesis: '()',
+	// lpar: '(',
+	// rpar: ')',
 	erase: '⌫',
-	sign: '±',
+	// sign: '±',
 	decimal: '.',
 	equals: '=',
 } as const;
 
-export type DigitKeys = keyof typeof DIGITS;
-export type Digits = ValueOf<typeof DIGITS>;
+type DigitType = typeof DIGITS;
+export type Digits = keyof DigitType;
+export type DigitValues = ValueOf<DigitType>;
 
-export type Operators = keyof typeof OPERATORS;
-export type OperatorSymbols = ValueOf<typeof OPERATORS>;
+type OperatorType = typeof OPERATORS;
+export type Operators = keyof OperatorType;
+export type OperatorIcons = ValueOf<OperatorType>;
 
-export type ArithmeticOperators = Extract<
-	Operators,
+type ArithmeticOperatorType = Pick<
+	OperatorType,
 	'add' | 'subtract' | 'multiply' | 'divide'
 >;
 
-export type FormulaOperators = Extract<
-	Operators,
-	ArithmeticOperators | 'lpar' | 'rpar'
->;
+export type ArithmeticOperators = keyof ArithmeticOperatorType;
+export type ArithmeticOperatorIcons = ValueOf<ArithmeticOperatorType>;
 
-export type FunctionalOperators = Exclude<Operators, FormulaOperators>;
+export type FunctionalOperatorType = Omit<
+	OperatorType,
+	ArithmeticOperators
+	// ArithmeticOperators | 'lpar' | 'rpar'
+>;
+export type FunctionalOperators = keyof FunctionalOperatorType;
+export type FunctionalOperatorIcons = ValueOf<FunctionalOperatorType>;

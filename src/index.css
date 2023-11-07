@@ -22,7 +22,7 @@ html {
 	padding: 0.25rem;
 	background-color: var(--gray-15);
 	border: 1px solid var(--gray-20);
-	border-radius: 0.125rem;
+	border-radius: 0.25rem;
 }
 
 #formula,
@@ -65,14 +65,14 @@ html {
 	background-color: #0006;
 }
 .btn-operator,
-.btn-function {
+.btn-functional {
 	background-color: #0003;
 }
 
 .btn-calculator {
 	font-size: 1.25rem;
 
-	border-radius: 0.125rem;
+	border-radius: 0.25rem;
 	outline-style: solid;
 	outline-width: 1px;
 	outline-color: transparent;
@@ -92,20 +92,25 @@ html {
 	background-color: transparent;
 }
 
-#function-parenthesis {
+#parenthesis {
 	color: #66f;
 }
 
-#function-clear {
+#clear {
 	color: #c33;
 }
 
-#function-clear:focus-visible,
-#function-clear:hover {
+#clear,
+#zero {
+	grid-column: 1 / 3;
+}
+
+#clear:focus-visible,
+#clear:hover {
 	background-color: #6003;
 }
 
-#function-equals:focus-visible,
-#function-equals:hover {
+#equals:focus-visible,
+#equals:hover {
 	background-color: #0063;
 }

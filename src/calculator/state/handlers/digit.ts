@@ -1,14 +1,13 @@
-import { assertNotNull } from '../../../utils/types.ts';
+import type { CalculatorState, FormulaItem } from '../state.ts';
+import type { TypedPayload } from '../actions.ts';
+import type { DigitValues } from '../../config.ts';
 
-import { type CalculatorState } from '../state.ts';
-import { type BaseActionPayload } from '../actions.ts';
-
-export const appendDigit = (last: string, digit: string) => {
-	const value = last === '0' ? digit : last + digit;
+export const appendDigit = (last: FormulaItem, value: DigitValues) => {
+	const number = last === '0' ? value : last + value;
 
 	// constrain maximum digits
 	const limit = 15;
-	if (value.length > limit) {
+	if (number.length > limit) {
 		return {
 			number: last,
 			error: `Maximum number of digits (${limit}) exceeded`,
@@ -17,7 +16,7 @@ export const appendDigit = (last: string, digit: string) => {
 
 	// constrain maximum fraction
 	const limitFraction = 10;
-	if (value.includes('.') && value.split('.')[1].length > limitFraction) {
+	if (number.includes('.') && number.split('.')[1].length > limitFraction) {
 		return {
 			number: last,
 			error: `Maximum number of digits after the decimal point is ${limitFraction}`,
@@ -25,21 +24,22 @@ export const appendDigit = (last: string, digit: string) => {
 	}
 
 	return {
-		number: value,
+		number,
 		error: null,
 	};
 };
 
 export default (
 	prev: CalculatorState,
-	payload: BaseActionPayload
+	payload: TypedPayload<'digit'>
 ): CalculatorState => {
-	const last = prev.formula.at(-1);
-	assertNotNull(last);
+	const { last, lastIsOperator, value } = payload;
 
-	const { number, error } = appendDigit(last, payload.value);
+	let { number, error } = appendDigit(last, value);
 
-	if (prev.action === 'digit') {
+	if (!lastIsOperator) {
+		// pop previous number
+		// push new number
 		return {
 			...prev,
 			formula: [...prev.formula.slice(0, -1), number],
@@ -47,34 +47,21 @@ export default (
 		};
 	}
 
-	if (
-		prev.action === 'operator' &&
-		last === 'divide' &&
-		payload.value === '0'
-	) {
+	number = payload.value;
+	error = null;
+
+	if (lastIsOperator && last === 'divide' && number === '0') {
+		// do not divide by 0
 		return {
 			...prev,
-			error: `Invalid Input`,
+			error: `Invalid Input: dividing by '0' is not possible`,
 		};
 	}
 
-	if (prev.action === 'operator') {
-		return {
-			...prev,
-			action: 'digit',
-			formula: [...prev.formula, payload.value],
-			error: null,
-		};
-	}
-
-	if (prev.action === 'function') {
-		return {
-			...prev,
-			action: 'digit',
-			formula: [...prev.formula.slice(0, -1), number],
-			error,
-		};
-	}
-
-	throw new Error('Missed a case');
+	// push new number
+	return {
+		...prev,
+		formula: [...prev.formula, payload.value],
+		error,
+	};
 };

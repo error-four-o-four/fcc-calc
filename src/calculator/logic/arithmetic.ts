@@ -1,7 +1,8 @@
 import { type ArithmeticOperators } from '../config.ts';
 
-import { assertCondition } from '../../utils/types.ts';
-import { isOperator, decimalLength } from '../../utils/assert.ts';
+import { assertCondition } from '../../utils/assert.ts';
+import { isArithmeticOperator } from '../../utils/confirm.ts';
+import { getDecimalLength } from '../../utils/parse.ts';
 
 type Calculator = {
 	[K in ArithmeticOperators]: (a: number, b: number) => number;
@@ -26,10 +27,10 @@ const calculator = <Calculator>{
 // https://stackoverflow.com/questions/44949148/node-giving-strange-output-on-sum-of-particular-float-digits/44949594#44949594
 
 Object.entries(calculator).forEach(([key, fn]) => {
-	assertCondition(isOperator(key));
+	assertCondition(isArithmeticOperator(key));
 
 	calculator[key] = (a, b) => {
-		const precision = 10 ** Math.max(decimalLength(a), decimalLength(b));
+		const precision = 10 ** Math.max(getDecimalLength(a), getDecimalLength(b));
 
 		let result = fn.call(null, a * precision, b * precision);
 
@@ -37,7 +38,7 @@ Object.entries(calculator).forEach(([key, fn]) => {
 
 		if (key === 'multiply') result /= precision * precision;
 
-		return decimalLength(result) > 11
+		return getDecimalLength(result) > 11
 			? Math.floor(result * 1e10) / 1e10
 			: result;
 	};

@@ -1,81 +1,68 @@
-import { type CalculatorState } from './state.ts';
-import { type DispatchedAction } from './actions.ts';
+import type { CalculatorState } from './state.ts';
+import type { Actions, DispatchedAction, TypedPayload } from './actions.ts';
+
+import { parseFormula } from '../../utils/parse.ts';
+
+import { getExtraPayload } from './actions.ts';
 
 import handleDigitAction from './handlers/digit.ts';
 import handleOperatorAction from './handlers/operator.ts';
+import handleFunctionalAction from './handlers/functional.ts';
 
-export const initialCalculatorState: CalculatorState = {
-	action: 'digit',
-	formula: ['0'],
-	error: null,
+import {
+	hasMinNumberItems,
+	resolveNegations,
+	calculate,
+} from '../logic/logic.ts';
+
+const handler: {
+	[K in Actions]: (
+		state: CalculatorState,
+		payload: TypedPayload<K>
+	) => CalculatorState;
+} = {
+	digit: handleDigitAction,
+	operator: handleOperatorAction,
+	functional: handleFunctionalAction,
 };
 
 export function stateReducer(state: CalculatorState, action: DispatchedAction) {
-	const { type, payload } = action;
+	const { type } = action;
 
+	// extend properties 'last', 'lastIsOperator'
+	const payload = {
+		...action.payload,
+		...getExtraPayload(state),
+	};
+
+	let updated: CalculatorState;
+
+	// update state
 	if (type === 'digit') {
-		return handleDigitAction(state, payload);
+		updated = handler[type](state, payload as TypedPayload<typeof type>);
+	} else if (type === 'operator') {
+		updated = handler[type](state, payload as TypedPayload<typeof type>);
+	} else {
+		updated = handler[type](state, payload as TypedPayload<typeof type>);
 	}
 
-	return handleOperatorAction(state, payload);
+	// removes 'subtract' items
+	updated.formula = resolveNegations(updated.formula);
+
+	const parsed = parseFormula(updated.formula);
+
+	// calcuate the result, when
+	const calculateResult =
+		// there's no error message
+		!updated.error &&
+		// the last item is a number
+		typeof parsed[parsed.length - 1] === 'number' &&
+		// and there are at least two numbers
+		hasMinNumberItems(parsed);
+
+	updated.result = updated.error
+		? null
+		: (calculateResult && calculate(parsed).toString()) || null;
+
+	return updated;
 }
-
-// import { type CalculatorState } from "../calculator/state/reducer.ts";
-// import { type Actions } from "../calculator/state/actions.ts";
-
-// import { valueIsDigit } from '../../assets/utils.ts';
-
-// const checkOmitOnNumber = (state: CalculatorState, value: number): boolean => {
-// 	// when zero has been clicked before
-// 	if (`${value}` === '0' && state.current === '0') return true;
-
-// 	// when the limit is reached
-// 	if (!state.isOperation && state.current.length > 11) {
-// 		console.log('limit');
-// 		return true;
-// 	}
-
-// 	// do not omit dispatch
-// 	return false;
-// };
-
-// const checkOmitOnFunction = (
-// 	state: CalculatorState,
-// 	value: Functions
-// ): boolean => {
-// 	// when display shows '0' and user wants to clear the display
-// 	if (value === 'clear' && state.current === '0' && !state.entries.length) {
-// 		return true;
-// 	}
-
-// 	// when display show '0' and user wants to erase a digit
-// 	if (value === 'erase' && state.current === '0') {
-// 		return true;
-// 	}
-
-// 	// when current value alread has a decimal point
-// 	if (
-// 		value === 'decimal' &&
-// 		state.current.includes('.') &&
-// 		!state.isOperation
-// 	) {
-// 		return true;
-// 	}
-
-// 	// do not omit dispatch
-// 	return false;
-// };
-
-// export const stateUpdateIsRequired = (
-// 	state: CalculatorState,
-// 	action: Actions,
-// 	value: string
-// ): boolean => {
-// 	return false;
-
-// 	// return typeof value === 'number'
-// 	// 	? checkOmitOnNumber(state, value)
-// 	// 	: action === 'function'
-// 	// 	? checkOmitOnFunction(state, value as Functions)
-// 	// 	: false;
-// };

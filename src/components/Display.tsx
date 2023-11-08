@@ -53,7 +53,7 @@ const renderNumber = (value: string) => {
 export default function Display() {
 	const state = useContext(CalculatorStateContext);
 
-	console.log(state);
+	// console.log(state);
 
 	// const renderedFormula = renderFormula(parsed);
 	// const classNameSize =
@@ -75,7 +75,7 @@ export default function Display() {
 					);
 				})}
 			</div>
-			<div id="display">{state.result || ''}</div>
+			<div id="display">{state.result ? renderNumber(state.result) : ''}</div>
 			<div id="notification">{state.error || ''}</div>
 		</>
 	);
